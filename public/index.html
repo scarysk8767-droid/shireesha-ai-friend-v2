@@ -6,42 +6,817 @@
 <meta name="theme-color" content="#09090f">
 <link rel="manifest" href="/manifest.webmanifest">
 <title>Shireesha — AI Friend</title>
+
 <style>
-:root{--bg:#08080d;--panel:#101018;--panel2:#151522;--text:#f5f5fa;--muted:#9a9aaa;--accent:#9b7cff;--line:#242438}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 15% 0%,#241642 0,#08080d 35%);color:var(--text);font-family:system-ui,sans-serif;height:100dvh;overflow:hidden}
-.app{height:100dvh;display:flex;flex-direction:column;max-width:900px;margin:auto}
-header{padding:16px 18px;border-bottom:1px solid var(--line);background:#0b0b12dd;backdrop-filter:blur(18px);display:flex;align-items:center;gap:12px}
-.avatar{width:44px;height:44px;border-radius:15px;background:linear-gradient(135deg,#9b7cff,#ff77b7);display:grid;place-items:center;font-weight:800;font-size:20px}
-h1{font-size:17px;margin:0}.status{font-size:12px;color:#8ee7ae}.spacer{flex:1}
-select,button{font:inherit;color:var(--text);background:var(--panel2);border:1px solid var(--line);border-radius:12px}select{padding:8px}
-.chat{flex:1;overflow:auto;padding:20px 14px 130px}.msg{display:flex;margin:10px 0}.msg.user{justify-content:flex-end}
-.bubble{max-width:82%;padding:12px 14px;border-radius:18px;line-height:1.45;white-space:pre-wrap;word-wrap:break-word}
-.assistant .bubble{background:var(--panel2);border:1px solid var(--line);border-bottom-left-radius:6px}
-.user .bubble{background:linear-gradient(135deg,#7154d8,#9b5bd1);border-bottom-right-radius:6px}
-.welcome{text-align:center;padding:28px 18px;color:var(--muted)}.welcome h2{color:var(--text);font-size:28px;margin:12px 0}
-.composer{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(900px,100%);padding:12px;background:#09090fee;backdrop-filter:blur(20px);border-top:1px solid var(--line)}
-form{display:flex;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:7px}
-textarea{flex:1;resize:none;background:transparent;border:0;outline:0;color:var(--text);padding:10px;font:inherit;max-height:120px}
-.send{width:46px;height:46px;background:var(--accent);border:0}.send:disabled{opacity:.45}.typing{color:var(--muted);font-size:13px;padding:0 4px 8px}
+:root{
+  --bg:#08080d;
+  --panel:#101018;
+  --panel2:#151522;
+  --text:#f5f5fa;
+  --muted:#9a9aaa;
+  --accent:#9b7cff;
+  --line:#242438;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:radial-gradient(circle at 15% 0%,#241642 0,#08080d 35%);
+  color:var(--text);
+  font-family:system-ui,sans-serif;
+  height:100dvh;
+  overflow:hidden
+}
+
+.app{
+  height:100dvh;
+  display:flex;
+  flex-direction:column;
+  max-width:900px;
+  margin:auto
+}
+
+header{
+  padding:16px 18px;
+  border-bottom:1px solid var(--line);
+  background:#0b0b12dd;
+  backdrop-filter:blur(18px);
+  display:flex;
+  align-items:center;
+  gap:12px
+}
+
+.avatar{
+  width:44px;
+  height:44px;
+  border-radius:15px;
+  background:linear-gradient(135deg,#9b7cff,#ff77b7);
+  display:grid;
+  place-items:center;
+  font-weight:800;
+  font-size:20px
+}
+
+h1{font-size:17px;margin:0}
+.status{font-size:12px;color:#8ee7ae}
+.spacer{flex:1}
+
+select,button{
+  font:inherit;
+  color:var(--text);
+  background:var(--panel2);
+  border:1px solid var(--line);
+  border-radius:12px
+}
+
+select{padding:8px}
+
+.icon-btn{
+  width:42px;
+  height:42px;
+  cursor:pointer
+}
+
+.chat{
+  flex:1;
+  overflow:auto;
+  padding:20px 14px 130px
+}
+
+.msg{
+  display:flex;
+  margin:10px 0
+}
+
+.msg.user{justify-content:flex-end}
+
+.bubble{
+  max-width:82%;
+  padding:12px 14px;
+  border-radius:18px;
+  line-height:1.45;
+  white-space:pre-wrap;
+  word-wrap:break-word
+}
+
+.assistant .bubble{
+  background:var(--panel2);
+  border:1px solid var(--line);
+  border-bottom-left-radius:6px
+}
+
+.user .bubble{
+  background:linear-gradient(135deg,#7154d8,#9b5bd1);
+  border-bottom-right-radius:6px
+}
+
+.welcome{
+  text-align:center;
+  padding:28px 18px;
+  color:var(--muted)
+}
+
+.welcome h2{
+  color:var(--text);
+  font-size:28px;
+  margin:12px 0
+}
+
+.composer{
+  position:fixed;
+  bottom:0;
+  left:50%;
+  transform:translateX(-50%);
+  width:min(900px,100%);
+  padding:12px;
+  background:#09090fee;
+  backdrop-filter:blur(20px);
+  border-top:1px solid var(--line)
+}
+
+form{
+  display:flex;
+  gap:8px;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:7px
+}
+
+textarea{
+  flex:1;
+  resize:none;
+  background:transparent;
+  border:0;
+  outline:0;
+  color:var(--text);
+  padding:10px;
+  font:inherit;
+  max-height:120px
+}
+
+.send{
+  width:46px;
+  height:46px;
+  background:var(--accent);
+  border:0;
+  cursor:pointer
+}
+
+.send:disabled{opacity:.45}
+
+.typing{
+  color:var(--muted);
+  font-size:13px;
+  padding:0 4px 8px
+}
+
+/* Memory panel */
+
+.memory-panel{
+  position:fixed;
+  inset:0;
+  background:#0008;
+  backdrop-filter:blur(8px);
+  display:none;
+  align-items:flex-end;
+  justify-content:center;
+  z-index:20
+}
+
+.memory-panel.open{display:flex}
+
+.memory-box{
+  width:min(900px,100%);
+  max-height:80dvh;
+  overflow:auto;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:24px 24px 0 0;
+  padding:20px
+}
+
+.memory-head{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:16px
+}
+
+.memory-head h2{
+  margin:0;
+  font-size:20px
+}
+
+.close{
+  margin-left:auto;
+  width:40px;
+  height:40px;
+  cursor:pointer
+}
+
+.memory-item{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px;
+  margin:8px 0;
+  background:var(--panel2);
+  border:1px solid var(--line);
+  border-radius:14px
+}
+
+.memory-text{
+  flex:1;
+  line-height:1.4
+}
+
+.delete-memory{
+  width:36px;
+  height:36px;
+  cursor:pointer
+}
+
+.memory-actions{
+  display:flex;
+  gap:8px;
+  margin-top:16px
+}
+
+.memory-actions button{
+  padding:10px 14px;
+  cursor:pointer
+}
+
+.empty-memory{
+  color:var(--muted);
+  text-align:center;
+  padding:25px 10px
+}
 </style>
 </head>
+
 <body>
+
 <div class="app">
-<header><div class="avatar">S</div><div><h1>Shireesha</h1><div class="status">● AI friend</div></div><div class="spacer"></div>
-<select id="mode"><option>Friend</option><option>Study</option><option>Tech</option><option>Motivation</option><option>Comfort</option><option>Creative</option></select></header>
-<main class="chat" id="chat"><div class="welcome" id="welcome"><div class="avatar" style="margin:auto">S</div><h2>Heyyy 👀</h2><p>I'm Shireesha. Your slightly chaotic AI friend. What's the scene?</p></div></main>
-<div class="composer"><div class="typing" id="typing" hidden>Shireesha is typing…</div><form id="form"><textarea id="input" rows="1" placeholder="Message Shireesha…"></textarea><button class="send" id="send">➤</button></form></div>
+
+<header>
+  <div class="avatar">S</div>
+
+  <div>
+    <h1>Shireesha</h1>
+    <div class="status">● AI friend</div>
+  </div>
+
+  <div class="spacer"></div>
+
+  <button class="icon-btn" id="memoryBtn" title="Memory">🧠</button>
+
+  <select id="mode">
+    <option>Friend</option>
+    <option>Study</option>
+    <option>Tech</option>
+    <option>Motivation</option>
+    <option>Comfort</option>
+    <option>Creative</option>
+  </select>
+</header>
+
+<main class="chat" id="chat">
+
+  <div class="welcome" id="welcome">
+    <div class="avatar" style="margin:auto">S</div>
+    <h2>Heyyy 👀</h2>
+    <p>I'm Shireesha. Your slightly chaotic AI friend. What's the scene?</p>
+  </div>
+
+</main>
+
+<div class="composer">
+
+  <div class="typing" id="typing" hidden>
+    Shireesha is typing…
+  </div>
+
+  <form id="form">
+
+    <textarea
+      id="input"
+      rows="1"
+      placeholder="Message Shireesha…"
+      autocomplete="off"
+    ></textarea>
+
+    <button class="send" id="send" type="submit">➤</button>
+
+  </form>
+
 </div>
+
+</div>
+
+
+<!-- MEMORY PANEL -->
+
+<div class="memory-panel" id="memoryPanel">
+
+  <div class="memory-box">
+
+    <div class="memory-head">
+
+      <h2>🧠 Shireesha's Memory</h2>
+
+      <button class="close" id="closeMemory">
+        ✕
+      </button>
+
+    </div>
+
+    <div id="memoryList"></div>
+
+    <div class="memory-actions">
+
+      <button id="clearMemory">
+        🧹 Clear all
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
 <script>
-const chat=document.getElementById("chat"),input=document.getElementById("input"),form=document.getElementById("form"),send=document.getElementById("send"),typing=document.getElementById("typing"),mode=document.getElementById("mode"),welcome=document.getElementById("welcome");
-let messages=JSON.parse(localStorage.getItem("shireesha_messages")||"[]"),memory=JSON.parse(localStorage.getItem("shireesha_memory")||"[]");
-function render(){welcome.style.display=messages.length?"none":"block";chat.querySelectorAll(".msg").forEach(x=>x.remove());for(const m of messages){const r=document.createElement("div");r.className="msg "+m.role;const b=document.createElement("div");b.className="bubble";b.textContent=m.content;r.appendChild(b);chat.appendChild(r)}chat.scrollTop=chat.scrollHeight}
-function save(){localStorage.setItem("shireesha_messages",JSON.stringify(messages.slice(-80)))}
-function add(role,content){messages.push({role,content});save();render()}
-async function sendMessage(text){text=(text||input.value).trim();if(!text)return;input.value="";input.style.height="auto";add("user",text);send.disabled=true;typing.hidden=false;
-try{const r=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages,memory,mode:mode.value})});const d=await r.json();if(!r.ok)throw new Error(d.error||"Server error");add("assistant",d.text)}
-catch(e){add("assistant","Ugh 😭 I can't reach my brain right now.\n\n"+e.message)}finally{send.disabled=false;typing.hidden=true;input.focus()}}
-form.addEventListener("submit",e=>{e.preventDefault();sendMessage()});input.addEventListener("input",()=>{input.style.height="auto";input.style.height=Math.min(input.scrollHeight,120)+"px"});input.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMessage()}});render();
+
+const chat =
+  document.getElementById("chat");
+
+const input =
+  document.getElementById("input");
+
+const form =
+  document.getElementById("form");
+
+const send =
+  document.getElementById("send");
+
+const typing =
+  document.getElementById("typing");
+
+const mode =
+  document.getElementById("mode");
+
+const welcome =
+  document.getElementById("welcome");
+
+const memoryBtn =
+  document.getElementById("memoryBtn");
+
+const memoryPanel =
+  document.getElementById("memoryPanel");
+
+const closeMemory =
+  document.getElementById("closeMemory");
+
+const memoryList =
+  document.getElementById("memoryList");
+
+const clearMemory =
+  document.getElementById("clearMemory");
+
+
+let messages =
+  JSON.parse(
+    localStorage.getItem("shireesha_messages") || "[]"
+  );
+
+let memory =
+  JSON.parse(
+    localStorage.getItem("shireesha_memory") || "[]"
+  );
+
+
+/* -----------------------------
+   CHAT RENDERING
+----------------------------- */
+
+function render(){
+
+  welcome.style.display =
+    messages.length ? "none" : "block";
+
+  chat
+    .querySelectorAll(".msg")
+    .forEach(x => x.remove());
+
+  for(const m of messages){
+
+    const row =
+      document.createElement("div");
+
+    row.className =
+      "msg " + m.role;
+
+    const bubble =
+      document.createElement("div");
+
+    bubble.className = "bubble";
+
+    bubble.textContent =
+      m.content;
+
+    row.appendChild(bubble);
+
+    chat.appendChild(row);
+  }
+
+  chat.scrollTop =
+    chat.scrollHeight;
+}
+
+
+/* -----------------------------
+   SAVE CHAT
+----------------------------- */
+
+function save(){
+
+  localStorage.setItem(
+    "shireesha_messages",
+    JSON.stringify(messages.slice(-80))
+  );
+}
+
+
+/* -----------------------------
+   ADD MESSAGE
+----------------------------- */
+
+function add(role,content){
+
+  messages.push({
+    role,
+    content
+  });
+
+  save();
+  render();
+}
+
+
+/* -----------------------------
+   MEMORY
+----------------------------- */
+
+function saveMemory(){
+
+  localStorage.setItem(
+    "shireesha_memory",
+    JSON.stringify(memory)
+  );
+}
+
+
+function addMemory(text){
+
+  text = text.trim();
+
+  if(!text) return;
+
+  const exists =
+    memory.some(
+      item =>
+        item.text.toLowerCase() ===
+        text.toLowerCase()
+    );
+
+  if(exists) return;
+
+  memory.push({
+    id: Date.now(),
+    text: text,
+    createdAt: new Date().toISOString()
+  });
+
+  saveMemory();
+}
+
+
+function deleteMemory(id){
+
+  memory =
+    memory.filter(
+      item => item.id !== id
+    );
+
+  saveMemory();
+  renderMemories();
+}
+
+
+function renderMemories(){
+
+  memoryList.innerHTML = "";
+
+  if(!memory.length){
+
+    memoryList.innerHTML =
+      '<div class="empty-memory">No memories saved yet 🧠<br><br>Try typing:<br><b>/remember I like cybersecurity</b></div>';
+
+    return;
+  }
+
+  for(const item of memory){
+
+    const row =
+      document.createElement("div");
+
+    row.className =
+      "memory-item";
+
+    const text =
+      document.createElement("div");
+
+    text.className =
+      "memory-text";
+
+    text.textContent =
+      item.text;
+
+    const del =
+      document.createElement("button");
+
+    del.className =
+      "delete-memory";
+
+    del.textContent =
+      "🗑️";
+
+    del.onclick =
+      () => deleteMemory(item.id);
+
+    row.appendChild(text);
+    row.appendChild(del);
+
+    memoryList.appendChild(row);
+  }
+}
+
+
+function openMemories(){
+
+  renderMemories();
+
+  memoryPanel.classList.add("open");
+}
+
+
+function closeMemories(){
+
+  memoryPanel.classList.remove("open");
+}
+
+
+memoryBtn.onclick =
+  openMemories;
+
+closeMemory.onclick =
+  closeMemories;
+
+memoryPanel.addEventListener(
+  "click",
+  e => {
+
+    if(e.target === memoryPanel){
+      closeMemories();
+    }
+
+  }
+);
+
+
+/* -----------------------------
+   CLEAR MEMORY
+----------------------------- */
+
+clearMemory.onclick =
+  () => {
+
+    if(!memory.length) return;
+
+    const confirmed =
+      confirm(
+        "Clear all Shireesha memories?"
+      );
+
+    if(!confirmed) return;
+
+    memory = [];
+
+    saveMemory();
+    renderMemories();
+  };
+
+
+/* -----------------------------
+   SEND MESSAGE
+----------------------------- */
+
+async function sendMessage(text){
+
+  text =
+    (text || input.value).trim();
+
+  if(!text) return;
+
+
+  /* MEMORY COMMAND */
+
+  if(
+    text.toLowerCase().startsWith("/remember ")
+  ){
+
+    const memoryText =
+      text.substring(10).trim();
+
+    if(memoryText){
+
+      addMemory(memoryText);
+
+      add(
+        "user",
+        text
+      );
+
+      add(
+        "assistant",
+        "Got it 🧠 I'll remember that."
+      );
+
+      input.value = "";
+
+      return;
+    }
+  }
+
+
+  /* SHOW MEMORY COMMAND */
+
+  if(
+    text.toLowerCase() === "/memories"
+  ){
+
+    input.value = "";
+
+    openMemories();
+
+    return;
+  }
+
+
+  input.value = "";
+
+  input.style.height =
+    "auto";
+
+  add(
+    "user",
+    text
+  );
+
+  send.disabled = true;
+
+  typing.hidden = false;
+
+
+  try{
+
+    const r =
+      await fetch(
+        "/api/chat",
+        {
+          method:"POST",
+
+          headers:{
+            "Content-Type":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify({
+              messages,
+              memory,
+              mode: mode.value
+            })
+        }
+      );
+
+
+    const d =
+      await r.json();
+
+
+    if(!r.ok){
+
+      throw new Error(
+        d.error ||
+        "Server error"
+      );
+
+    }
+
+
+    add(
+      "assistant",
+      d.text
+    );
+
+
+  }catch(e){
+
+    add(
+      "assistant",
+      "Ugh 😭 I can't reach my brain right now.\n\n" +
+      e.message
+    );
+
+  }finally{
+
+    send.disabled = false;
+
+    typing.hidden = true;
+
+    input.focus();
+
+  }
+}
+
+
+/* -----------------------------
+   FORM
+----------------------------- */
+
+form.addEventListener(
+  "submit",
+  e => {
+
+    e.preventDefault();
+
+    sendMessage();
+
+  }
+);
+
+
+/* -----------------------------
+   TEXTAREA
+----------------------------- */
+
+input.addEventListener(
+  "input",
+  () => {
+
+    input.style.height =
+      "auto";
+
+    input.style.height =
+      Math.min(
+        input.scrollHeight,
+        120
+      ) + "px";
+
+  }
+);
+
+
+/* ENTER TO SEND */
+
+input.addEventListener(
+  "keydown",
+  e => {
+
+    if(
+      e.key === "Enter" &&
+      !e.shiftKey
+    ){
+
+      e.preventDefault();
+
+      sendMessage();
+
+    }
+
+  }
+);
+
+
+/* INITIAL RENDER */
+
+render();
+
 </script>
+
 </body>
 </html>
