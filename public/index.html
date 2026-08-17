@@ -619,7 +619,132 @@ clearMemory.onclick =
     renderMemories();
   };
 
+/* -----------------------------
+   SMART MEMORY SUGGESTION
+----------------------------- */
 
+function suggestMemory(text){
+
+  if(!text || text.length < 8) return;
+
+  const patterns = [
+    /\bi like\b/i,
+    /\bi love\b/i,
+    /\bi enjoy\b/i,
+    /\bmy favorite\b/i,
+    /\bi prefer\b/i,
+    /\bi'm learning\b/i,
+    /\bi am learning\b/i,
+    /\bi study\b/i,
+    /\bi'm studying\b/i,
+    /\bi am studying\b/i,
+    /\bmy goal is\b/i,
+    /\bi want to become\b/i,
+    /\bi want to learn\b/i,
+    /\bmy hobby is\b/i,
+    /\bi usually\b/i
+  ];
+
+  const useful =
+    patterns.some(pattern =>
+      pattern.test(text)
+    );
+
+  if(!useful) return;
+
+  const alreadySaved =
+    memory.some(item =>
+      item.text.toLowerCase() ===
+      text.toLowerCase()
+    );
+
+  if(alreadySaved) return;
+
+  const oldSuggestion =
+    document.getElementById(
+      "memorySuggestion"
+    );
+
+  if(oldSuggestion)
+    oldSuggestion.remove();
+
+  const box =
+    document.createElement("div");
+
+  box.id =
+    "memorySuggestion";
+
+  box.style.cssText = `
+    margin:10px 14px;
+    padding:14px;
+    background:#151522;
+    border:1px solid #34344c;
+    border-radius:16px;
+    color:#f5f5fa;
+  `;
+
+  box.innerHTML = `
+    <div style="margin-bottom:10px">
+      🧠 That sounds like something useful to remember.
+    </div>
+
+    <div style="font-size:13px;color:#9a9aaa;margin-bottom:12px">
+      "${escapeHtml(text.slice(0,180))}"
+    </div>
+
+    <button id="rememberSuggestion"
+      style="padding:9px 13px;background:#9b7cff;border:0;border-radius:10px;color:white">
+      Remember
+    </button>
+
+    <button id="dismissSuggestion"
+      style="padding:9px 13px;margin-left:6px;background:#151522;border:1px solid #34344c;border-radius:10px;color:white">
+      Not now
+    </button>
+  `;
+
+  chat.appendChild(box);
+
+  chat.scrollTop =
+    chat.scrollHeight;
+
+
+  document
+    .getElementById("rememberSuggestion")
+    .onclick = () => {
+
+      addMemory(text);
+
+      box.innerHTML =
+        "🧠 Got it! I'll remember that.";
+
+      setTimeout(() => {
+        box.remove();
+      }, 1800);
+    };
+
+
+  document
+    .getElementById("dismissSuggestion")
+    .onclick = () => {
+      box.remove();
+    };
+}
+
+
+/* -----------------------------
+   SAFE HTML
+----------------------------- */
+
+function escapeHtml(text){
+
+  return text
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
 /* -----------------------------
    SEND MESSAGE
 ----------------------------- */
@@ -732,7 +857,8 @@ async function sendMessage(text){
       "assistant",
       d.text
     );
-
+    
+suggestMemory(text);
 
   }catch(e){
 
