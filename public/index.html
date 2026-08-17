@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#09090f">
+<link rel="manifest" href="/manifest.webmanifest">
+<title>Shireesha — AI Friend</title>
+<style>
+:root{--bg:#08080d;--panel:#101018;--panel2:#151522;--text:#f5f5fa;--muted:#9a9aaa;--accent:#9b7cff;--line:#242438}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 15% 0%,#241642 0,#08080d 35%);color:var(--text);font-family:system-ui,sans-serif;height:100dvh;overflow:hidden}
+.app{height:100dvh;display:flex;flex-direction:column;max-width:900px;margin:auto}
+header{padding:16px 18px;border-bottom:1px solid var(--line);background:#0b0b12dd;backdrop-filter:blur(18px);display:flex;align-items:center;gap:12px}
+.avatar{width:44px;height:44px;border-radius:15px;background:linear-gradient(135deg,#9b7cff,#ff77b7);display:grid;place-items:center;font-weight:800;font-size:20px}
+h1{font-size:17px;margin:0}.status{font-size:12px;color:#8ee7ae}.spacer{flex:1}
+select,button{font:inherit;color:var(--text);background:var(--panel2);border:1px solid var(--line);border-radius:12px}select{padding:8px}
+.chat{flex:1;overflow:auto;padding:20px 14px 130px}.msg{display:flex;margin:10px 0}.msg.user{justify-content:flex-end}
+.bubble{max-width:82%;padding:12px 14px;border-radius:18px;line-height:1.45;white-space:pre-wrap;word-wrap:break-word}
+.assistant .bubble{background:var(--panel2);border:1px solid var(--line);border-bottom-left-radius:6px}
+.user .bubble{background:linear-gradient(135deg,#7154d8,#9b5bd1);border-bottom-right-radius:6px}
+.welcome{text-align:center;padding:28px 18px;color:var(--muted)}.welcome h2{color:var(--text);font-size:28px;margin:12px 0}
+.composer{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(900px,100%);padding:12px;background:#09090fee;backdrop-filter:blur(20px);border-top:1px solid var(--line)}
+form{display:flex;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:7px}
+textarea{flex:1;resize:none;background:transparent;border:0;outline:0;color:var(--text);padding:10px;font:inherit;max-height:120px}
+.send{width:46px;height:46px;background:var(--accent);border:0}.send:disabled{opacity:.45}.typing{color:var(--muted);font-size:13px;padding:0 4px 8px}
+</style>
+</head>
+<body>
+<div class="app">
+<header><div class="avatar">S</div><div><h1>Shireesha</h1><div class="status">● AI friend</div></div><div class="spacer"></div>
+<select id="mode"><option>Friend</option><option>Study</option><option>Tech</option><option>Motivation</option><option>Comfort</option><option>Creative</option></select></header>
+<main class="chat" id="chat"><div class="welcome" id="welcome"><div class="avatar" style="margin:auto">S</div><h2>Heyyy 👀</h2><p>I'm Shireesha. Your slightly chaotic AI friend. What's the scene?</p></div></main>
+<div class="composer"><div class="typing" id="typing" hidden>Shireesha is typing…</div><form id="form"><textarea id="input" rows="1" placeholder="Message Shireesha…"></textarea><button class="send" id="send">➤</button></form></div>
+</div>
+<script>
+const chat=document.getElementById("chat"),input=document.getElementById("input"),form=document.getElementById("form"),send=document.getElementById("send"),typing=document.getElementById("typing"),mode=document.getElementById("mode"),welcome=document.getElementById("welcome");
+let messages=JSON.parse(localStorage.getItem("shireesha_messages")||"[]"),memory=JSON.parse(localStorage.getItem("shireesha_memory")||"[]");
+function render(){welcome.style.display=messages.length?"none":"block";chat.querySelectorAll(".msg").forEach(x=>x.remove());for(const m of messages){const r=document.createElement("div");r.className="msg "+m.role;const b=document.createElement("div");b.className="bubble";b.textContent=m.content;r.appendChild(b);chat.appendChild(r)}chat.scrollTop=chat.scrollHeight}
+function save(){localStorage.setItem("shireesha_messages",JSON.stringify(messages.slice(-80)))}
+function add(role,content){messages.push({role,content});save();render()}
+async function sendMessage(text){text=(text||input.value).trim();if(!text)return;input.value="";input.style.height="auto";add("user",text);send.disabled=true;typing.hidden=false;
+try{const r=await fetch("/api/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages,memory,mode:mode.value})});const d=await r.json();if(!r.ok)throw new Error(d.error||"Server error");add("assistant",d.text)}
+catch(e){add("assistant","Ugh 😭 I can't reach my brain right now.\n\n"+e.message)}finally{send.disabled=false;typing.hidden=true;input.focus()}}
+form.addEventListener("submit",e=>{e.preventDefault();sendMessage()});input.addEventListener("input",()=>{input.style.height="auto";input.style.height=Math.min(input.scrollHeight,120)+"px"});input.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMessage()}});render();
+</script>
+</body>
+</html>
