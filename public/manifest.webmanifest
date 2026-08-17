@@ -1,0 +1,9 @@
+{
+  "name":"Shireesha — AI Friend",
+  "short_name":"Shireesha",
+  "start_url":"/",
+  "display":"standalone",
+  "background_color":"#08080d",
+  "theme_color":"#09090f",
+  "description":"Shireesha, your playful AI friend."
+}
